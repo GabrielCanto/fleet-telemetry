@@ -68,11 +68,12 @@ After editing `backend/requirements.txt` or `frontend/package.json`, rebuild tha
 
 ## AI interaction log (keep it current)
 
-`docs/AI_LOG.md` is a graded, living deliverable — **always** record meaningful interactions there. After any
-meaningful unit of work in this repo, append an entry capturing: the prompt/intent, a short summary of what was
-produced, and any correction or redirection the user made (the corrections are the most valuable part). Keep
-entries factual and concise. Do **not** rewrite or auto-generate the closing reflection — that section is the
-user's own judgement, and the user vets the whole file for honesty before submission.
+`docs/AI_LOG.md` is a graded, living deliverable. Log interactions that **influenced the project's design,
+code, debugging, or documentation**; do **not** record small or otherwise irrelevant exchanges. For each
+logged interaction, append an entry capturing the prompt/intent, a short summary of what was produced, and any
+correction or redirection the user made (the corrections are the most valuable part). Keep entries factual and
+concise. Do **not** rewrite or auto-generate the closing reflection — that section is the user's own
+judgement, and the user vets the whole file for honesty before submission.
 
 ## Architecture
 
