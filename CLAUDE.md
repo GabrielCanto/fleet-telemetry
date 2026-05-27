@@ -66,6 +66,14 @@ After editing `backend/requirements.txt` or `frontend/package.json`, rebuild tha
 - **Never force-push** without explicit permission in chat. If a history rewrite is truly needed (e.g. after a
   rebase), use `git push --force-with-lease` — and only after that approval.
 
+## AI interaction log (keep it current)
+
+`docs/AI_LOG.md` is a graded, living deliverable — **always** record meaningful interactions there. After any
+meaningful unit of work in this repo, append an entry capturing: the prompt/intent, a short summary of what was
+produced, and any correction or redirection the user made (the corrections are the most valuable part). Keep
+entries factual and concise. Do **not** rewrite or auto-generate the closing reflection — that section is the
+user's own judgement, and the user vets the whole file for honesty before submission.
+
 ## Architecture
 
 **The ingest spine — `backend/app/ingest.py::ingest_event`** is the heart of the system and the code most
