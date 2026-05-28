@@ -82,6 +82,9 @@ worthwhile when push latency matters or fan-out is large (noted below).
 ## 4. Unclear requirements & the assumptions I made
 
 - **Anomaly definition** was left open → the 6 rules above.
+- **`lat` / `lon`** are accepted as optional (nullable) even though the spec example shows them populated.
+  GPS dropouts are a real failure mode in industrial fleets; rejecting those events would silently lose
+  telemetry. The schema is intentionally Postel: it accepts the spec-example shape *and* the dropout case.
 - **Unknown `vehicle_id`** on telemetry → **rejected with 404**. The fleet is a fixed, provisioned roster
   (seeded), so this keeps the "`/fleet/state` always sums to 50" invariant exact and testable. *Alternative:*
   upsert-on-ingest, which I rejected to avoid ingesting garbage IDs.

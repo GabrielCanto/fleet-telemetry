@@ -91,6 +91,34 @@ first seeder has committed 50 missions and the check-then-add is a no-op. The in
 (missions don't use ON CONFLICT like the siblings) is a code-quality nit, not a latent correctness bug — and
 the new test now pins the invariant, so any future reorder of seed steps would surface as a failure.
 
+## 5. Spec-adherence review and polish pass
+
+**Prompt (summary).** Pasted the full original take-home brief and asked Claude to *analyse* whether every
+requirement was met, and to call out anything still missing.
+
+**Output (summary).** Claude walked the 16 spec items against the code, mapping each to the implementing
+file/line plus the test that proves it (e.g. `routers/telemetry.py:13` + `test_zone_counter_concurrency`,
+`routers/fleet.py:19` + `test_fleet_state_safe_under_concurrent_updates`). All four deliverables (ADR, AI
+log, README, public repo) were confirmed present. It then surfaced seven small-but-defensible nits:
+permissive `lat`/`lon` vs. the spec example, no literal "50 at once" burst test, no throughput benchmark,
+no zero-simulator demo path, `fault_status` raised every fault tick (not just on the edge), `docker
+compose down -v` wiping zone counts between runs, and a missing 404 test for the status endpoint. It
+proposed three tiny polish items and asked which to apply.
+
+**Action taken.** I asked Claude to apply all three. It branched off `origin/main` as
+`feature/spec-polish` (per the CLAUDE.md workflow), then: (1) added an ADR bullet documenting `lat/lon`
+optionality as a deliberate "Postel" choice — GPS dropouts are real in industrial fleets, so rejecting
+those events would silently lose telemetry; I chose the doc-note over the schema-tightening because the
+tightening would have cascaded into ~10 test-helper updates for no real-world benefit; (2) added a
+simulator-less demo curl loop to the README so a reviewer running only `docker compose up` can drive a
+fault into the dashboard by hand; (3) added `test_status_update_unknown_vehicle_returns_404` next to its
+telemetry twin. Full suite: **25 passed** (one more than before). Commit `40e87e4` pushed.
+
+**Correction / redirection.** After the polish commit Claude reported "done" without updating this AI log
+— an easy oversight because the log isn't exercised by tests or hooks. I asked it directly: "did you
+update the AI log?" Caught and logged here so the deliverable stays accurate. Lesson for next time: any
+change that goes on the branch should trigger a check that the AI log still reflects the work.
+
 ---
 
 ## Reflection (my own assessment — please read this as my judgement)

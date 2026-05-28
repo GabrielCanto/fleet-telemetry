@@ -66,6 +66,16 @@ API_BASE=http://localhost:8000 python simulator/simulate.py
 
 Watch the dashboard update live: statuses/batteries change, anomalies surface, and zone counts climb.
 
+**Don't want to run the simulator?** Drive a few faults by hand to see the dashboard react — each call
+cancels the vehicle's active mission and opens a maintenance record:
+
+```bash
+for i in 1 2 3; do
+  curl -s -X POST localhost:8000/vehicles/v-$i/status \
+    -H 'content-type: application/json' -d '{"status":"fault"}'
+done
+```
+
 ---
 
 ## Run the tests
