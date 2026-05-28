@@ -51,7 +51,7 @@ transaction boundaries and locking obvious, which is the property that matters.
 
 ---
 
-## 2. Anomaly definition (the brief says "your definition — justify it")
+## 2. Anomaly definition
 
 Simple, deterministic, **auditable** rules evaluated inside the ingest transaction. Stateless rules depend
 only on the event; stateful rules compare against the previous reading cached on the locked vehicle row (O(1),
