@@ -1,12 +1,12 @@
 :root {
-  --bg: #0f1419;
-  --panel: #171c24;
+  --bg: #000000;
+  --panel: #1a1a1a;
   --panel-2: #1e242e;
   --border: #2a313c;
   --text: #e6edf3;
   --muted: #8b949e;
   --idle: #6e7681;
-  --moving: #388bfd;
+  --moving: #006bff;
   --charging: #3fb950;
   --fault: #f85149;
   --warning: #d29922;
@@ -83,7 +83,6 @@ body {
 /* panels */
 .panel {
   background: var(--panel);
-  border: 1px solid var(--border);
   border-radius: 10px;
   padding: 16px 18px;
   margin-bottom: 18px;
