@@ -66,6 +66,31 @@ the idempotent repeat) and the maintenance count stayed at exactly 1.
   bars; the fleet counts and "updated" timestamp changed between samples (polling works); **no console/CORS
   errors**.
 
+## 4. Concurrency review and additional test coverage
+
+**Prompt (summary).** Three threads after merging: (a) a written concurrency-risk review of the ingest spine,
+fault funnel, and read endpoints; (b) the exact behaviour when two telemetry events share an `event.timestamp`;
+(c) "analyse the existing tests, then write the missing scenarios — and add a seed concurrency test."
+
+**Output (summary).** Claude produced a four-finding review (threadpool capacity exceeds DB connection pool;
+seed mission-insert TOCTOU; READ COMMITTED relied on implicitly; zone-update silent no-op on a missing zone),
+then traced the same-timestamp tie to one line: the **strict `>`** in `is_newest = event.timestamp >
+vehicle.last_event_ts` — so a tie is not newest, the second event is treated as out-of-order, both rows are
+persisted, but the zone counter still increments twice. Eleven new tests were added across two extended files
+and two new ones (`test_ingest_concurrency.py`, `test_seed_concurrency.py`): anomaly threshold boundaries
+(`<15`, `<5`, `>8`, `>30`), first-event suppression of stateful rules, out-of-order zone counting, fault via
+`POST /telemetry`, severity tiebreak in `last_anomaly_id`, sequential re-fault idempotency, two same-timestamp
+concurrency tests, and the concurrent-`seed()` test. `pytest` went from **13 → 24 passes in ~1.4 s**.
+
+**Correction / redirection.** The seed test was the correction. I asked Claude to write a test that reproduced
+its claimed seed bug; on running, the test **passed** — falsifying its earlier claim that concurrent `seed()`
+would crash on the missions check-then-`db.add`. The reason it doesn't crash is upstream: zones and vehicles
+are inserted with `ON CONFLICT DO NOTHING`, and under Postgres speculative-insertion semantics the second
+seeder waits on the first seeder's uncommitted zone row. By the time it reaches the missions `SELECT`, the
+first seeder has committed 50 missions and the check-then-add is a no-op. The inconsistency in `seed.py`
+(missions don't use ON CONFLICT like the siblings) is a code-quality nit, not a latent correctness bug — and
+the new test now pins the invariant, so any future reorder of seed steps would surface as a failure.
+
 ---
 
 ## Reflection (my own assessment — please read this as my judgement)
