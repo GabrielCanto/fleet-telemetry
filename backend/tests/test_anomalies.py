@@ -88,6 +88,10 @@ def test_unknown_vehicle_returns_404(client):
     assert client.post("/telemetry", json=_event(vehicle_id="v-999")).status_code == 404
 
 
+def test_status_update_unknown_vehicle_returns_404(client):
+    assert client.post("/vehicles/v-999/status", json={"status": "fault"}).status_code == 404
+
+
 def test_unknown_zone_returns_422(client):
     assert client.post("/telemetry", json=_event(vehicle_id="v-1", zone_entered="nowhere")).status_code == 422
 
